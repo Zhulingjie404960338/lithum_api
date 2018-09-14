@@ -58,6 +58,13 @@ class TagModel(db.Model):
 
 
 class HostModel(object):
+    # @classmethod
+    # def get_count(cls):
+    #     sql = "select count(*) from hosts where status != 3 and available in (1, 2);"
+    #     result = db.engine.execute(sql).fetchall()
+    #     count = result[0][0]
+    #     return count
+
     @classmethod
     def get(cls):
         HOST_STATUS_MONITORED = 0
@@ -70,21 +77,39 @@ class HostModel(object):
         HOST_AVAILABLE_TRUE = 1
         HOST_AVAILABLE_FALSE = 2
 
-        hosts = {}
-        sql = "select hostid, host, name, status, available from hosts where status != 3 and available in (1, 2);"
+        hosts = []
+        sql = "select hostid, name from hosts where status != 3 and available in (1, 2);"
         results = db.engine.execute(sql)
         for row in results:
-            name = row[2]
-            hosts[name] = {}
-            hosts[name]["hostid"] = row[0]
-            hosts[name]["items"] = []
-        for host in hosts:
-            sql = "select itemid, name, status from items where hostid = {0}".format(hosts[host]["hostid"])
+            host = {}
+            host["hostid"] = row[0]
+            host["name"] = row[1]
+            host["items"] = []
+            sql = "select itemid, name, status from items where hostid = {0}".format(host["hostid"])
             items = db.engine.execute(sql)
             for item in items:
-                hosts[host]["items"].append({
+                host["items"].append({
                     "itemid": item["itemid"],
                     "name": item["name"],
                     "status": item["status"]
                 })
+            hosts.append(host)
+        # hosts = {}
+        # sql = "select hostid, name from hosts where status != 3 and available in (1, 2);"
+        # results = db.engine.execute(sql)
+        # for row in results:
+        #     name = row[1]
+        #     hosts[name] = {}
+        #     hosts[name]["hostid"] = row[0]
+        #     hosts[name]["items"] = []
+        # for host in hosts:
+        #     sql = "select itemid, name, status from items where hostid = {0}".format(hosts[host]["hostid"])
+        #     items = db.engine.execute(sql)
+        #     for item in items:
+        #         hosts[host]["items"].append({
+        #             "itemid": item["itemid"],
+        #             "name": item["name"],
+        #             "status": item["status"]
+        #         })
+        # return hosts
         return hosts
