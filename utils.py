@@ -22,6 +22,8 @@ def get_app():
     __app = Flask(__name__)
     CORS(__app)
     __app.config['SQLALCHEMY_DATABASE_URI'] = settings.DATABASE_URI
+    __app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+    __app.config['SERVER_NAME'] = settings.SERVER_NAME
     __app.json_encoder = Encoder
     __db = SQLAlchemy(__app)
     return __app
