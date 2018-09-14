@@ -1,12 +1,11 @@
-from models import TagModel, HostModel
+from models import HostModel
 from views import APIView
-from validate import Validater, StringValidate, NumberValidate, ListValidate
 
 
 class HostView(APIView):
     def get(self):
-        HostModel.get()
-        return {}
+        data = HostModel.get()
+        return {"count": len(data), "list": data}
 
     def post(self):
         return {}
